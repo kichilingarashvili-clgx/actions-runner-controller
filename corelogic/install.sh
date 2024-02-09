@@ -17,10 +17,10 @@ kubectl rollout restart deployment arc-gha-rs-controller -n "${CONTROLLER_NAMESP
 INSTALLATION_NAME="arc-runner-set-1"
 SCALE_SET_1_NAMESPACE="arc-runners"
 GITHUB_CONFIG_URL="https://github.com/corelogic-private/technology_ops_us-smartops-genai_bot"
-GITHUB_PAT="fake"
 GITHUB_CONFIG_SECRET_NAME="arc-runner-set-1-github-token"
 
 kubectl create namespace "${SCALE_SET_1_NAMESPACE}"
+kubectl delete secret "${GITHUB_CONFIG_SECRET_NAME}" -n "${SCALE_SET_1_NAMESPACE}"
 kubectl create secret generic "${GITHUB_CONFIG_SECRET_NAME}" \
     --namespace "${SCALE_SET_1_NAMESPACE}" \
     --from-literal=github_token="${GITHUB_PAT}"
@@ -35,7 +35,6 @@ helm install "${INSTALLATION_NAME}" \
     --set githubConfigSecret="${GITHUB_CONFIG_SECRET_NAME}" \
     --set maxRunners=10 \
     --set minRunners=2 \
-    -f ~/dev/current/actions/actions-runner-controller/corelogic/gha-runner-scale-set-1/values.yaml \
     oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
 
 kubectl get all -n "${SCALE_SET_1_NAMESPACE}"
@@ -48,10 +47,15 @@ kubectl logs pod/arc-gha-rs-controller-764f888fc7-rscgl -n arc-systems
 # update
 helm upgrade "${INSTALLATION_NAME}" \
     --namespace "${SCALE_SET_1_NAMESPACE}" \
-    --create-namespace \
+    --debug \
     --set githubConfigUrl="${GITHUB_CONFIG_URL}" \
     --set githubConfigSecret="${GITHUB_CONFIG_SECRET_NAME}" \
     --set maxRunners=10 \
     --set minRunners=2 \
-    -f ~/dev/current/actions/actions-runner-controller/corelogic/gha-runner-scale-set-1/values.yaml \
     oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
+    
+
+    -f ~/dev/current/actions/actions-runner-controller/corelogic/gha-runner-scale-set-1/values.yaml \
+
+helm uninstall "${INSTALLATION_NAME}" \
+    --namespace "${SCALE_SET_1_NAMESPACE}"
