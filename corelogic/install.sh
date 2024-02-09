@@ -17,7 +17,7 @@ kubectl rollout restart deployment arc-gha-rs-controller -n "${CONTROLLER_NAMESP
 INSTALLATION_NAME="arc-runner-set-1"
 SCALE_SET_1_NAMESPACE="arc-runners"
 GITHUB_CONFIG_URL="https://github.com/corelogic-private/technology_ops_us-smartops-genai_bot"
-GITHUB_PAT="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"
+GITHUB_PAT="fake"
 GITHUB_CONFIG_SECRET_NAME="arc-runner-set-1-github-token"
 
 kubectl create namespace "${SCALE_SET_1_NAMESPACE}"
